@@ -1,7 +1,11 @@
 //Seletores
 const botaoAdicionarTarefa = document.getElementById("addBtn")
+const botaoListarTodas = document.getElementById("showTodas")
 const inputAdicionarTarefa = document.getElementById("taskInput")
+const body = document.body
 const lista = document.getElementById("taskList")
+
+
 
 let tarefas = []
 
@@ -10,10 +14,12 @@ let tarefas = []
 function renderizar() {
     lista.innerHTML = ""
     let tarefasFiltradas = tarefas
-    tarefasFiltradas.forEach(() => {
+    tarefasFiltradas.forEach((tarefa) => {
         const li = document.createElement("li")
         const texto = document.createElement("span")
+        texto.textContent = tarefa.texto
         li.appendChild(texto)
+        lista.appendChild(li)
 
     })
 }
@@ -24,5 +30,22 @@ botaoAdicionarTarefa.addEventListener("click",()=> {
     if (!texto) return 
     tarefas.push({id: Date.now(),texto: texto,concluida: false})
     inputAdicionarTarefa.value = ""
-    alert(`Tarefa '${texto}' adicionada com sucesso!`)
+    const mensagem = document.createElement("span")
+    mensagem.id = "mensagem"
+    mensagem.textContent = `A tarefa ${texto} foi adicionada com sucesso!✅`
+    body.appendChild(mensagem)
+    setTimeout(()=> {
+        
+        mensagem.classList.add("mensagemSumindo")
+        setTimeout(()=> {
+            mensagem.remove()
+
+        },600)
+    },3000)
+    
+})
+
+//Listener para listar todas as tarefas
+botaoListarTodas.addEventListener("click",()=> {
+    renderizar()
 })

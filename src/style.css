@@ -29,3 +29,15 @@ button {
 button:hover {
   background-color: #45a049;
 }
+
+li {
+    list-style-position: inside;
+}
+
+#mensagem {
+  transition: opacity .6s ease-out
+}
+
+.mensagemSumindo {
+  opacity: 0;
+}
