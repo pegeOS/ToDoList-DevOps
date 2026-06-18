@@ -49,3 +49,42 @@ botaoAdicionarTarefa.addEventListener("click",()=> {
 botaoListarTodas.addEventListener("click",()=> {
     renderizar()
 })
+
+
+//Listener para marcar/desmarcar tarefa
+lista.addEventListener("change",(event) => {
+    if (event.target.type === "checkbox") {
+        const id = Number(event.target.dataset.id)
+        const tarefa = tasks.find(t => t.id === id)
+        if (tarefa) {
+            tarefa.concluida = event.target.checked
+            renderizar()
+        }
+    }
+    
+})
+
+
+//Listener para remover tarefa 
+lista.addEventListener("click",(event) => {
+    if (event.target.type === "button") {
+        const id = Number(event.target.dataset.id)
+        tasks = tasks.filter(t => t.id !== id)
+        renderizar()
+    }
+})
+
+//Filtro para tarefas
+botaoTodasTasks.addEventListener('click',() => {
+    filtroAtual = "todas"
+    renderizar()
+})
+botaoTasksAtivas.addEventListener("click",()=> {
+    filtroAtual = "ativas"
+    renderizar()
+})
+
+botaoTasksConcluidas.addEventListener('click',()=> {
+    filtroAtual = "concluidas"
+    renderizar()
+})
