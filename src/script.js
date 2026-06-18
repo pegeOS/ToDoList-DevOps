@@ -1,26 +1,55 @@
 //Seletores
 const botaoAdicionarTarefa = document.getElementById("addBtn")
-const botaoListarTodas = document.getElementById("showTodas")
 const inputAdicionarTarefa = document.getElementById("taskInput")
-const body = document.body
 const lista = document.getElementById("taskList")
+
+const botaoListarTodas = document.getElementById("showTodas")
+const botaoListarAtivas = document.getElementById("showAtivas")
+const botaoListarConcluidas = document.getElementById("showConcluidas")
+
 
 
 
 let tarefas = []
+let filtroAtual = "todas"
 
 
 //Função para mostrar as tarefas
 function renderizar() {
     lista.innerHTML = ""
-    let tarefasFiltradas = tarefas
+
+   const tarefasFiltradas = tarefas.filter(tarefa => {
+        if (filtroAtual === "ativas") return !tarefa.concluida
+        if (filtroAtual === "concluidas") return tarefa.concluida
+        return true // "todas"
+    })
+
     tarefasFiltradas.forEach((tarefa) => {
         const li = document.createElement("li")
+        
+        // Checkbox para marcar como concluída
+        const checkbox = document.createElement("input")
+        checkbox.type = "checkbox"
+        checkbox.checked = tarefa.concluida
+        checkbox.dataset.id = tarefa.id
+        
         const texto = document.createElement("span")
         texto.textContent = tarefa.texto
-        li.appendChild(texto)
-        lista.appendChild(li)
+        if (tarefa.concluida) {
+            texto.style.textDecoration = "line-through" // Efeito visual de concluído
+        }
+        
+        // Botão de remover
+        const botaoDeletar = document.createElement("button")
+        botaoDeletar.type = "button"
+        botaoDeletar.textContent = "X"
+        botaoDeletar.dataset.id = tarefa.id
 
+        // Montando o item da lista
+        li.appendChild(checkbox)
+        li.appendChild(texto)
+        li.appendChild(botaoDeletar)
+        lista.appendChild(li)
     })
 }
 
@@ -33,7 +62,7 @@ botaoAdicionarTarefa.addEventListener("click",()=> {
     const mensagem = document.createElement("span")
     mensagem.id = "mensagem"
     mensagem.textContent = `A tarefa ${texto} foi adicionada com sucesso!✅`
-    body.appendChild(mensagem)
+    document.body.appendChild(mensagem)
     setTimeout(()=> {
         
         mensagem.classList.add("mensagemSumindo")
@@ -45,17 +74,11 @@ botaoAdicionarTarefa.addEventListener("click",()=> {
     
 })
 
-//Listener para listar todas as tarefas
-botaoListarTodas.addEventListener("click",()=> {
-    renderizar()
-})
-
-
 //Listener para marcar/desmarcar tarefa
 lista.addEventListener("change",(event) => {
     if (event.target.type === "checkbox") {
         const id = Number(event.target.dataset.id)
-        const tarefa = tasks.find(t => t.id === id)
+        const tarefa = tarefas.find(t => t.id === id)
         if (tarefa) {
             tarefa.concluida = event.target.checked
             renderizar()
@@ -69,7 +92,7 @@ lista.addEventListener("change",(event) => {
 lista.addEventListener("click",(event) => {
     if (event.target.type === "button") {
         const id = Number(event.target.dataset.id)
-        tasks = tasks.filter(t => t.id !== id)
+        tarefas = tarefas.filter(t => t.id !== id)
         renderizar()
     }
 })
