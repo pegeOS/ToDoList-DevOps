@@ -11,14 +11,16 @@
 <body>
  <h1>Minhas Tarefas</h1>
 
- <input type="text" placeholder="Digite uma tarefa..." id="taskInput">
- <p>
-    <button id="addBtn">Adicionar</button>
-</p>
+ <div class="input-container">
+     <input type="text" id="taskInput" placeholder="Digite uma tarefa...">
+     <button id="addBtn">Adicionar</button>
+   </div>
 
- <button id="showTodas">Todas</button>
- <button id="showAtivas">Ativas</button>
- <button id="showConcluidas">Concluídas</button>
+   <div class="filters">
+     <button class="filter-btn active" id="showTodas" data-filter="todas">Todas</button>
+     <button class="filter-btn" id="showAtivas" data-filter="ativas">Ativas</button>
+     <button class="filter-btn" id="showConcluidas" data-filter="concluidas">Concluídas</button>
+   </div>
  
  <ul id="taskList">
 
