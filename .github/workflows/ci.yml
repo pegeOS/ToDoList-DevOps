@@ -13,4 +13,4 @@ jobs:
         - uses: actions/checkout@v4
 
         - name: Build Docker Image
-          run: docker build -t to-do-list:v1 . 
+          run: docker build -t to-do-list:v2 . 
