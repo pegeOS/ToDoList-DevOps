@@ -59,6 +59,9 @@ botaoAdicionarTarefa.addEventListener("click",()=> {
     if (!texto) return 
     tarefas.push({id: Date.now(),texto: texto,concluida: false})
     inputAdicionarTarefa.value = ""
+
+    renderizar()
+
     const mensagem = document.createElement("span")
     mensagem.id = "mensagem"
     mensagem.textContent = `A tarefa ${texto} foi adicionada com sucesso!✅`
@@ -98,16 +101,16 @@ lista.addEventListener("click",(event) => {
 })
 
 //Filtro para tarefas
-botaoTodasTasks.addEventListener('click',() => {
+botaoListarTodas.addEventListener('click',() => {
     filtroAtual = "todas"
     renderizar()
 })
-botaoTasksAtivas.addEventListener("click",()=> {
+botaoListarAtivas.addEventListener("click",()=> {
     filtroAtual = "ativas"
     renderizar()
 })
 
-botaoTasksConcluidas.addEventListener('click',()=> {
+botaoListarConcluidas.addEventListener('click',()=> {
     filtroAtual = "concluidas"
     renderizar()
 })
