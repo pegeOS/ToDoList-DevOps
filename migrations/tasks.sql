@@ -1,0 +1,5 @@
+CREATE TABLE tarefas (
+    id TEXT PRIMARY KEY,
+    texto TEXT NOT NULL,
+    concluida INTEGER NOT NULL DEFAULT 0
+)
