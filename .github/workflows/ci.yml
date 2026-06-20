@@ -1,16 +1,17 @@
 name: CI
-
 on:
   push:
     branches: [main]
   pull_request:
       branches: [main]
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v4
-
         - name: Build Docker Image
-          run: docker build -t to-do-list:v2 . 
+          run: docker build -t to-do-list:v2 .
+        - name: Instalar dependências
+          run: npm install
+        - name: Rodar testes
+          run: npm test

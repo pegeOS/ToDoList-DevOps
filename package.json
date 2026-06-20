@@ -8,7 +8,7 @@
   "scripts": {
     "start": "node server/server.js",
     "migrate": "node server/init-db.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -20,5 +20,8 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
