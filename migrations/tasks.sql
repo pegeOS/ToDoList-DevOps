@@ -1,4 +1,4 @@
-CREATE TABLE tarefas (
+CREATE TABLE IF NOT EXISTS tarefas (
     id TEXT PRIMARY KEY,
     texto TEXT NOT NULL,
     concluida INTEGER NOT NULL DEFAULT 0

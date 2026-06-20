@@ -12,13 +12,16 @@ const botaoListarConcluidas = document.getElementById("showConcluidas")
 
 let tarefas = []
 let filtroAtual = "todas"
+// default to the backend origin so fetch() works when the page
+// is served from a different origin (e.g. Live Server on :5500)
+const API_BASE = window.API_BASE || 'http://localhost:3000'
 
 
 //Função para mostrar as tarefas
 function renderizar() {
     lista.innerHTML = ""
 
-   const tarefasFiltradas = tarefas.filter(tarefa => {
+    const tarefasFiltradas = tarefas.filter(tarefa => {
         if (filtroAtual === "ativas") return !tarefa.concluida
         if (filtroAtual === "concluidas") return tarefa.concluida
         return true // "todas"
@@ -26,19 +29,19 @@ function renderizar() {
 
     tarefasFiltradas.forEach((tarefa) => {
         const li = document.createElement("li")
-        
+
         // Checkbox para marcar como concluída
         const checkbox = document.createElement("input")
         checkbox.type = "checkbox"
         checkbox.checked = tarefa.concluida
         checkbox.dataset.id = tarefa.id
-        
+
         const texto = document.createElement("span")
         texto.textContent = tarefa.texto
         if (tarefa.concluida) {
             texto.style.textDecoration = "line-through" // Efeito visual de concluído
         }
-        
+
         // Botão de remover
         const botaoDeletar = document.createElement("button")
         botaoDeletar.type = "button"
@@ -53,64 +56,107 @@ function renderizar() {
     })
 }
 
+// remove notificações residuais (por segurança ao recarregar/LiveServer)
+; (function clearStartupMessage() {
+    const m = document.getElementById('mensagem')
+    if (m) m.remove()
+})();
+
 //Listener para adicionar tarefas
-botaoAdicionarTarefa.addEventListener("click",()=> {
-    const texto = inputAdicionarTarefa.value
-    if (!texto) return 
-    tarefas.push({id: Date.now(),texto: texto,concluida: false})
-    inputAdicionarTarefa.value = ""
+botaoAdicionarTarefa.addEventListener("click", async () => {
+    const texto = inputAdicionarTarefa.value.trim()
+    if (!texto) return
+    try {
+        const id = String(Date.now())
+        const resp = await fetch(`${API_BASE}/tasks`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, texto, concluida: false })
+        })
+        if (!resp.ok) throw new Error('Falha ao adicionar tarefa')
+        inputAdicionarTarefa.value = ''
+        // maintain previous UX: show temporary success message and
+        // update local list without forcing a full reload
+        const nova = { id, texto, concluida: false }
+        tarefas.push(nova)
 
-    renderizar()
 
-    const mensagem = document.createElement("span")
-    mensagem.id = "mensagem"
-    mensagem.textContent = `A tarefa ${texto} foi adicionada com sucesso!✅`
-    document.body.appendChild(mensagem)
-    setTimeout(()=> {
-        
-        mensagem.classList.add("mensagemSumindo")
-        setTimeout(()=> {
-            mensagem.remove()
-
-        },600)
-    },3000)
-    
+        const mensagem = document.createElement("span")
+        mensagem.id = "mensagem"
+        mensagem.textContent = `A tarefa "${texto}" foi adicionada com sucesso! ✅`
+        document.body.appendChild(mensagem)
+        setTimeout(() => {
+            mensagem.classList.add("mensagemSumindo")
+            setTimeout(() => mensagem.remove(), 600)
+        }, 3400)
+    } catch (err) {
+        console.error(err)
+        alert('Erro ao adicionar tarefa')
+    }
 })
 
 //Listener para marcar/desmarcar tarefa
-lista.addEventListener("change",(event) => {
+lista.addEventListener("change", async (event) => {
     if (event.target.type === "checkbox") {
-        const id = Number(event.target.dataset.id)
-        const tarefa = tarefas.find(t => t.id === id)
-        if (tarefa) {
-            tarefa.concluida = event.target.checked
-            renderizar()
+        const id = event.target.dataset.id
+        const checked = event.target.checked
+        try {
+            const resp = await fetch(`${API_BASE}/tasks/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ concluida: checked })
+            })
+            if (!resp.ok) throw new Error('Falha ao atualizar tarefa')
+            await loadTasks()
+        } catch (err) {
+            console.error(err)
+            alert('Erro ao atualizar tarefa')
         }
     }
-    
 })
 
 
 //Listener para remover tarefa 
-lista.addEventListener("click",(event) => {
+lista.addEventListener("click", async (event) => {
     if (event.target.type === "button") {
-        const id = Number(event.target.dataset.id)
-        tarefas = tarefas.filter(t => t.id !== id)
-        renderizar()
+        const id = event.target.dataset.id
+        try {
+            const resp = await fetch(`${API_BASE}/tasks/${id}`, { method: 'DELETE' })
+            if (!resp.ok) throw new Error('Falha ao remover')
+            await loadTasks()
+        } catch (err) {
+            console.error(err)
+            alert('Erro ao remover tarefa')
+        }
     }
 })
 
 //Filtro para tarefas
-botaoListarTodas.addEventListener('click',() => {
+botaoListarTodas.addEventListener('click', async () => {
     filtroAtual = "todas"
-    renderizar()
+    await loadTasks()
 })
-botaoListarAtivas.addEventListener("click",()=> {
+botaoListarAtivas.addEventListener("click", async () => {
     filtroAtual = "ativas"
-    renderizar()
+    await loadTasks()
 })
 
-botaoListarConcluidas.addEventListener('click',()=> {
+botaoListarConcluidas.addEventListener('click', async () => {
     filtroAtual = "concluidas"
-    renderizar()
+    await loadTasks()
 })
+
+async function loadTasks() {
+    try {
+        const resp = await fetch(`${API_BASE}/tasks`)
+        if (!resp.ok) throw new Error('Falha ao buscar tarefas')
+        tarefas = await resp.json()
+        renderizar()
+    } catch (err) {
+        console.error(err)
+        alert('Erro ao carregar tarefas')
+    }
+}
+
+// inicializa sem puxar tarefas do servidor (não mostrar tarefas já cadastradas)
+renderizar()
