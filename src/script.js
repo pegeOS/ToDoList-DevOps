@@ -79,6 +79,7 @@ botaoAdicionarTarefa.addEventListener("click", async () => {
         // update local list without forcing a full reload
         const nova = { id, texto, concluida: false }
         tarefas.push(nova)
+        renderizar() // <--- ADICIONADO: Faz a nova tarefa aparecer na tela imediatamente!
 
 
         const mensagem = document.createElement("span")
@@ -87,11 +88,18 @@ botaoAdicionarTarefa.addEventListener("click", async () => {
         document.body.appendChild(mensagem)
         setTimeout(() => {
             mensagem.classList.add("mensagemSumindo")
-            setTimeout(() => mensagem.remove(), 600)
+            setTimeout(() => m.remove(), 600) // Ajustado para remover a variável correta caso necessário
         }, 3400)
     } catch (err) {
         console.error(err)
         alert('Erro ao adicionar tarefa')
+    }
+})
+
+// NOVO: Listener para escutar a tecla Enter no campo de texto
+inputAdicionarTarefa.addEventListener("keydown", (evento) => {
+    if (evento.key === "Enter") {
+        botaoAdicionarTarefa.click() // Simula o clique e roda toda a lógica acima
     }
 })
 
