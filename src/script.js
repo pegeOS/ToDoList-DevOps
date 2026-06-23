@@ -75,8 +75,6 @@ botaoAdicionarTarefa.addEventListener("click", async () => {
         })
         if (!resp.ok) throw new Error('Falha ao adicionar tarefa')
         inputAdicionarTarefa.value = ''
-        // maintain previous UX: show temporary success message and
-        // update local list without forcing a full reload
         const nova = { id, texto, concluida: false }
         tarefas.push(nova)
         renderizar() // <--- ADICIONADO: Faz a nova tarefa aparecer na tela imediatamente!
