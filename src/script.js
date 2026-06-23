@@ -14,7 +14,7 @@ let tarefas = []
 let filtroAtual = "todas"
 // default to the backend origin so fetch() works when the page
 // is served from a different origin (e.g. Live Server on :5500)
-const API_BASE = window.API_BASE || 'http://localhost:3000'
+const API_BASE = window.API_BASE || 'https://to-do-list-backend-unzk.onrender.com'
 
 
 //Função para mostrar as tarefas
