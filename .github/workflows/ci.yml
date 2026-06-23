@@ -46,3 +46,8 @@ jobs:
           file: ./server/Dockerfile
           push: true
           tags: pegeos/to-do-list-backend:latest
+      - name: Deploy frontend no Render
+        run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_FRONTEND }}"
+
+      - name: Deploy backend no Render
+        run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_BACKEND }}"
